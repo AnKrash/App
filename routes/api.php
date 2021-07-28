@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::post('/user', [\App\Http\Controllers\AuthController::class, 'store']);
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
