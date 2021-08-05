@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Http\Requests\RegisterRequest;
@@ -15,15 +16,24 @@ class AuthController extends Controller
 //    {
 //        $this->var = $var;
 //    }
+    protected UserService $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
 
     public function store(RegisterRequest $request)
     {
-        $request['password'] = Hash::make($request['password']);
-        $request['remember_token'] = Str::random(10);
-        $user = User::create($request->toArray());
-        $token = $user->createToken('Laravel Password Grant Client')->accessToken;
+        $user = $this->userService->create($request->toArray());
+        $token = $user->createToken('token')->accessToken;
         $response = ['token' => $token];
 
         return response($response, 201);
+    }
+
+    public function createUser(RegisterRequest $request)
+    {
+
     }
 }
