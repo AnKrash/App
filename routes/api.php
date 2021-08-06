@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,8 +15,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/user', [\App\Http\Controllers\AuthController::class, 'store']);
-
+Route::post('/user', [AuthController::class, 'store']);
+Route::post('/user/login', [AuthController::class, 'loginUser']);
+Route::post('/user/reset', [AuthController::class, 'resetUser']);
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

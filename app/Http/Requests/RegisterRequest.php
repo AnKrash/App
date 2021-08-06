@@ -31,10 +31,8 @@ class RegisterRequest extends FormRequest
         return [
             'name' => 'required',
             'email' => 'required|max:255|email',
-            'password' => 'required|max:255|confirmed',
-        ];
-    }
-
+            'password' => 'required|max:255|confirmed'];
+}
     /**
      * Handle a failed validation attempt.
      *
