@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\NewPasswordRequest;
 use App\Http\Requests\ResetRequest;
 use App\Services\UserService;
 use App\Http\Requests\RegisterRequest;
@@ -43,6 +44,12 @@ class AuthController extends Controller
     public function resetUser(ResetRequest $request)
     {
         $response = $this->userService->reset($request->toArray());
+
+        return response(["success" => $response]);
+    }
+    public function newPasswordUser(NewPasswordRequest $request)
+    {
+        $response = $this->userService->newPass($request->toArray());
 
         return response(["success" => $response]);
     }
