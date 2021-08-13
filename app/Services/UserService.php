@@ -76,8 +76,7 @@ class UserService
         $data['password'] = Hash::make($data['password']);
         $user->password = $data['password'];
         $user->save();
-        ResetPassword::where('id',$resetToken->id)->delete();
-
+        $resetToken->delete();
 
         return true;
     }
@@ -89,11 +88,10 @@ class UserService
             return false;
         }
         if ($user->can('update', $data))
-        $user->name = $data['name'];
+            $user->name = $data['name'];
         $user->email = $data['email'];
         $user->save();
 
         return true;
     }
-
 }

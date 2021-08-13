@@ -77,18 +77,23 @@ class UserServiceTest extends TestCase
     public function testReset()
     {
         //todo add user into db
+        User::factory()->create([
+            'email' => "exmple@exe",
+            'id' => "222",
+        ]);
+
         $data = [
             'email' => 'exmple@exe',
         ];
-        $service = new UserService();
-        $result = $service->reset($data);
 
         Mail::fake();
+        $service = new UserService();
+        $result = $service->reset($data);
 
         $this->assertTrue($result);
 
         //todo check by user_id
-        $this->assertDatabaseHas('reset_passwords', ['email' => 'exmple@exe']);
+        $this->assertDatabaseHas('reset_passwords', ['user_id' => '222']);
         Mail::assertSent(ResetPasswordMail::class);
     }
 
@@ -120,12 +125,10 @@ class UserServiceTest extends TestCase
         $result = $service->newPass($data);
 
         //make assertions
-       $this->assertEquals($expected, $result);
-//        if ($expected) {
-//            // todo check password was changed and check reset_passwords record was removed
-//            // $this->assertDatabaseHas('user', ['password' => 'exmple@exe']);
-//             $this->assertDatabaseMissing('reset_passwords',['password'=>'123456']);
-//        }
+        $this->assertEquals($expected, $result);
+        if ($expected) {
+            $this->assertDatabaseMissing('users', ['password' => "123"]);
+        }
     }
 
     public function newPassProvider(): array
