@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\ResetPassword;
 use App\Models\User;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -56,21 +57,43 @@ class UserService
 
     public function newPass(array $data): bool
     {
-        $user = User::where('name', '=', $data['name'])->first();
+        $resetToken = ResetPassword::where('token', '=', $data['token'])->first();
+        if ($resetToken === null) {
+            return false;
+        }
 
+        $user = User::where('id', '=', $resetToken->user_id)->first();
         if ($user === null) {
             return false;
         }
-        $resetToken = ResetPassword::where('token', '=', $data['token'])->first();
 
-        if ($data['token'] === $resetToken->token) {
-            $data['password'] = Hash::make($data['password']);
-            $user->password = $data['password'];
-
-            $user->save();
-
+        $timeNow = Carbon::now()->gettimestamp();
+        $tokenCreatedAt = Carbon::parse($resetToken->created_at)->gettimestamp();
+        if ($timeNow - $tokenCreatedAt > 7200) {
+            return false;
         }
+
+        $data['password'] = Hash::make($data['password']);
+        $user->password = $data['password'];
+        $user->save();
+        ResetPassword::where('id',$resetToken->id)->delete();
+
 
         return true;
     }
+
+    public function update(array $data): bool
+    {
+        $user = User::where('id', '=', $data['id'])->first();
+        if ($user === null) {
+            return false;
+        }
+        if ($user->can('update', $data))
+        $user->name = $data['name'];
+        $user->email = $data['email'];
+        $user->save();
+
+        return true;
+    }
+
 }

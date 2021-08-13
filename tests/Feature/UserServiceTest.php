@@ -7,7 +7,6 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class UserServiceTest extends TestCase
@@ -63,6 +62,30 @@ class UserServiceTest extends TestCase
         ];
 
         $response = $this->json('POST', '/api/user/reset', $data)->assertStatus(200);
+        $response->assertExactJson([
+            'success' => true
+        ]);
+    }
+
+    public function testNewPass()
+    {
+        User::factory()->create([
+            'email' => 'exmple@exe',
+            'password' => Hash::make('pass'),
+        ]);
+
+        ResetPassword::factory()->create([
+            'token' =>  '123',
+            'user_id' =>  1,
+        ]);
+
+        $data = [
+            'token' => '123',
+            'password' => 'pass1',
+            'password_confirm' => 'pass1',
+        ];
+
+        $response = $this->json('POST', '/api/user/new_password', $data)->assertStatus(200);
         $response->assertExactJson([
             'success' => true
         ]);

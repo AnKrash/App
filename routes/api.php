@@ -19,6 +19,7 @@ Route::post('/user', [AuthController::class, 'store']);
 Route::post('/user/login', [AuthController::class, 'loginUser']);
 Route::post('/user/reset', [AuthController::class, 'resetUser']);
 Route::post('/user/new_password', [AuthController::class, 'newPasswordUser']);
+Route::put('/user/update', [AuthController::class, 'updateUser']);
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

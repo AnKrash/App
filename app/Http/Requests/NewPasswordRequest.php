@@ -28,11 +28,9 @@ class NewPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'  => 'required',
-            'email' => 'required|max:255|email',
+            'token' => 'required',
             'password' => 'required|max:255',
             'password_confirm' => 'required|max:255'
-
         ];
     }
 

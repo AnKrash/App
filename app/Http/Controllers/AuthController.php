@@ -47,8 +47,16 @@ class AuthController extends Controller
 
         return response(["success" => $response]);
     }
+
     public function newPasswordUser(NewPasswordRequest $request)
     {
+        $response = $this->userService->newPass($request->toArray());
+
+        return response(["success" => $response]);
+    }
+    public function updateUser(RegisterRequest $request)
+    {
+        $this->authorize('update', $request);
         $response = $this->userService->newPass($request->toArray());
 
         return response(["success" => $response]);
