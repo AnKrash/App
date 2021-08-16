@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Http\Controllers\AuthController;
+use App\Models\User;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Passport\Passport;
@@ -14,7 +16,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-         'App\Models\Model' => 'App\Policies\ModelPolicy',
+        'App\Models\Model' => 'App\Policies\ModelPolicy',
     ];
 
     /**
@@ -25,10 +27,13 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-        if (! $this->app->routesAreCached()) {
+        if (!$this->app->routesAreCached()) {
             Passport::routes();
-//            Gate::define('update', 'app/Http/Controllers/AuthController@update');
+
         }
-        //
+        Gate::define('update', function ($user) {
+            return $user->isAdmin;
+        });
+        Gate::allows('update');
     }
 }

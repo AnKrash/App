@@ -5,8 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\NewPasswordRequest;
 use App\Http\Requests\ResetRequest;
+use App\Http\Resources\UserCollection;
 use App\Services\UserService;
 use App\Http\Requests\RegisterRequest;
+use http\Client\Request;
+use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Facades\Gate;
 
 class AuthController extends Controller
 {
@@ -54,10 +58,29 @@ class AuthController extends Controller
 
         return response(["success" => $response]);
     }
+
+    /**
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
     public function updateUser(RegisterRequest $request)
     {
-        $this->authorize('update', $request);
-        $response = $this->userService->newPass($request->toArray());
+        $this->authorize('update', User::class);
+
+        $header = $request->header('Authorization');
+
+        if (strlen($header) != 12) {
+            return response(['success' => false]);
+        };
+
+        $response = $this->userService->update($request->toArray());
+
+        return response(["success" => $response]);
+
+    }
+
+    public function getUser($id)
+    {
+        $response = $this->userService->User($id);
 
         return response(["success" => $response]);
     }

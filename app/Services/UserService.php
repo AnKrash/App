@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Mail\ResetPasswordMail;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Contracts\Support\Arrayable;
 
 class UserService
 {
@@ -83,15 +85,29 @@ class UserService
 
     public function update(array $data): bool
     {
-        $user = User::where('id', '=', $data['id'])->first();
+
+        $user = User::where('name', '=', $data['name'])->first();
         if ($user === null) {
             return false;
         }
-        if ($user->can('update', $data))
-            $user->name = $data['name'];
+//        $this->authorize('update', $user);
+
+        $user->name = $data['name'];
         $user->email = $data['email'];
+        $user->password = $data['password'];
         $user->save();
 
         return true;
     }
+
+    public function User(int $id): ?User
+    {
+        $user = User::where('id', '=', $id)->first();
+        if ($user === null) {
+            return null;
+        }
+
+        return $user;
+    }
+
 }

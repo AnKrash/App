@@ -76,7 +76,7 @@ class UserServiceTest extends TestCase
 
     public function testReset()
     {
-        //todo add user into db
+
         User::factory()->create([
             'email' => "exmple@exe",
             'id' => "222",
@@ -92,7 +92,6 @@ class UserServiceTest extends TestCase
 
         $this->assertTrue($result);
 
-        //todo check by user_id
         $this->assertDatabaseHas('reset_passwords', ['user_id' => '222']);
         Mail::assertSent(ResetPasswordMail::class);
     }
@@ -107,11 +106,11 @@ class UserServiceTest extends TestCase
      */
     public function testNewPass(string $token, int $userId, Carbon $createdAt, bool $expected = false)
     {
+        //prepare conditions
         User::factory()->create([
             'password' => "123",
         ]);
 
-        //prepare conditions
         ResetPassword::factory()->create([
             'user_id' => $userId,
             'token' => "123",
