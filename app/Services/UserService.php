@@ -2,15 +2,15 @@
 
 namespace App\Services;
 
+use App\Http\Resources\UserResourses;
 use App\Models\ResetPassword;
 use App\Models\User;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App\Mail\ResetPasswordMail;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Contracts\Support\Arrayable;
 
 class UserService
 {
@@ -90,7 +90,6 @@ class UserService
         if ($user === null) {
             return false;
         }
-//        $this->authorize('update', $user);
 
         $user->name = $data['name'];
         $user->email = $data['email'];
@@ -100,14 +99,19 @@ class UserService
         return true;
     }
 
-    public function User(int $id): ?User
+    public function index():Collection
     {
-        $user = User::where('id', '=', $id)->first();
+       return User::all()->pluck('email');
+    }
+
+    public function show(int $id): ?UserResourses
+    {
+        $user = User::find($id);
         if ($user === null) {
             return null;
         }
 
-        return $user;
+        return new UserResourses($user);
     }
 
 }

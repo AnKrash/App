@@ -5,12 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\NewPasswordRequest;
 use App\Http\Requests\ResetRequest;
-use App\Http\Resources\UserCollection;
 use App\Services\UserService;
 use App\Http\Requests\RegisterRequest;
-use http\Client\Request;
 use Illuminate\Foundation\Auth\User;
-use Illuminate\Support\Facades\Gate;
 
 class AuthController extends Controller
 {
@@ -75,12 +72,18 @@ class AuthController extends Controller
         $response = $this->userService->update($request->toArray());
 
         return response(["success" => $response]);
-
     }
 
-    public function getUser($id)
+    public function index()
     {
-        $response = $this->userService->User($id);
+        $response = $this->userService->index();
+
+        return response(["success" => $response]);
+    }
+
+    public function show($id)
+    {
+        $response = $this->userService->show($id);
 
         return response(["success" => $response]);
     }
